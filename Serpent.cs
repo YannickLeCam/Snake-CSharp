@@ -6,7 +6,7 @@ namespace Snake
     public class Serpent
     {
         private int _taille = 1;
-        private List<Point> _coordonnee = new List<Point>();
+        private LinkedList<Point> _coordonnee = new LinkedList<Point>();
         private int _grilleLargeur;
         private int _grilleLongueur;
 
@@ -14,13 +14,13 @@ namespace Snake
         {
             _grilleLargeur = grilleLargeur;
             _grilleLongueur = grilleLongueur;
-            _coordonnee.Add(new Point(grilleLargeur / 2, grilleLongueur / 2));
+            _coordonnee.AddLast(new Point(grilleLargeur / 2, grilleLongueur / 2));
         }
 
-        public bool SeDeplacer(char keyPress, List<List<int>> grille)
+        public bool SeDeplacer(char keyPress, List<List<int>> grille, ref Point fruitPosition)
         {
-            // Get the current head position (last element in the list)
-            Point currentHead = _coordonnee[_coordonnee.Count - 1];
+            // Get the current head position
+            Point currentHead = _coordonnee.Last.Value;
             Point newHead = new Point(currentHead.X, currentHead.Y);
 
             // Calculate the new head position based on the key pressed
@@ -45,21 +45,28 @@ namespace Snake
                 return false; // Collision with itself
             }
 
+            bool biteItself = grille[newHead.X][newHead.Y] == 1;
+            if (biteItself) 
+            {
+                return false;
+            }
             // Check if the new head position is on a fruit
             bool fruitEaten = grille[newHead.X][newHead.Y] == 2;
 
             // Update the grid
-            _coordonnee.Add(newHead); // Add the new head position
+            _coordonnee.AddLast(newHead); // Add the new head position
 
             if (!fruitEaten)
             {
-                Point tail = _coordonnee[0]; // Get the tail
-                _coordonnee.RemoveAt(0); // Remove the tail
+                Point tail = _coordonnee.First.Value; // Get the tail
+                _coordonnee.RemoveFirst(); // Remove the tail
                 grille[tail.X][tail.Y] = 0; // Clear the tail position
             }
             else
             {
                 _taille++; // Increase the size of the snake
+                           // Generate new fruit position
+                fruitPosition = GenererNouveauFruit(grille);
             }
 
             grille[newHead.X][newHead.Y] = 1; // Set the new head position
@@ -67,6 +74,22 @@ namespace Snake
             return true;
         }
 
+        private Point GenererNouveauFruit(List<List<int>> grille)
+        {
+            Random random = new Random();
+            Point newFruitPosition;
+            do
+            {
+                newFruitPosition = new Point(
+                    random.Next(0, _grilleLargeur),
+                    random.Next(0, _grilleLongueur)
+                );
+            } while (grille[newFruitPosition.X][newFruitPosition.Y] != 0); // Continue until empty cell is found
+
+            return newFruitPosition;
+        }
+
         public IEnumerable<Point> Positions => _coordonnee;
+        public int Taille => _taille;
     }
 }

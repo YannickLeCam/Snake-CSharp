@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Windows;
 using System.Windows.Media;
 
 namespace Snake
@@ -36,7 +37,7 @@ namespace Snake
         private Serpent _serpent;
         private char _keyPressed;
         private Point _fruitPosition;
-        private Random _random;
+        private Random _random = new Random();
 
         public ObservableCollection<Cell> Grille
         {
@@ -54,7 +55,6 @@ namespace Snake
             _largeurGrille = largeurGrille;
             _grille = new ObservableCollection<Cell>();
             _serpent = new Serpent(largeurGrille, longueurGrille);
-            _random = new Random();
 
             // Initialize the grid with empty cells
             for (int i = 0; i < largeurGrille * longueurGrille; i++)
@@ -66,7 +66,7 @@ namespace Snake
             _grille[largeurGrille / 2 + (longueurGrille / 2) * largeurGrille].Color = Brushes.Green;
 
             // Set up a fruit
-            _fruitPosition = GetFruitPosition();
+            _fruitPosition = GenererNouveauFruit();
             _grille[_fruitPosition.X + _fruitPosition.Y * largeurGrille].Color = Brushes.Red;
         }
 
@@ -110,20 +110,29 @@ namespace Snake
             grille[_fruitPosition.X][_fruitPosition.Y] = 2;
 
             // Move the snake
-            bool gameOver = !_serpent.SeDeplacer(keyPress, grille);
+            bool gameOver = !_serpent.SeDeplacer(keyPress, grille, ref _fruitPosition);
             if (gameOver)
             {
                 // Handle game over
+                MessageBox.Show("Game Over!");
+                return;
             }
-            else
+
+            AffiGrille();
+        }
+
+        private Point GenererNouveauFruit()
+        {
+            Point newFruitPosition;
+            do
             {
-                // Check if the snake ate the fruit
-                if (grille[_serpent.Positions.Last().X][_serpent.Positions.Last().Y] == 2)
-                {
-                    _fruitPosition = GetFruitPosition();
-                }
-                AffiGrille();
-            }
+                newFruitPosition = new Point(
+                    _random.Next(0, _largeurGrille),
+                    _random.Next(0, _longueurGrille)
+                );
+            } while (_serpent.Positions.Any(p => p.X == newFruitPosition.X && p.Y == newFruitPosition.Y));
+
+            return newFruitPosition;
         }
 
         public Point GetFruitPosition()
