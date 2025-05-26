@@ -10,7 +10,7 @@
         <ItemsControl ItemsSource="{Binding Grille}" Name="GameGrid">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <UniformGrid Columns="18" Rows="12"/>
+                    <UniformGrid Columns="38" Rows="22"/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>

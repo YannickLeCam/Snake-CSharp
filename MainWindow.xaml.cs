@@ -8,12 +8,12 @@ namespace Snake
     {
         private DispatcherTimer _gameTimer;
         private Game _game;
-        private char _lastKeyPressed;
+        private char _lastKeyPressed = '♥';
 
         public MainWindow()
         {
             InitializeComponent();
-            _game = new Game(18, 12);
+            _game = new Game(38, 22);
             this.DataContext = _game;
             this.KeyDown += new KeyEventHandler(OnKeyDown);
 
@@ -37,7 +37,7 @@ namespace Snake
                     break;
                 case Key.Down:
                     _lastKeyPressed = 'D';
-                    break;
+                    break; 
                 case Key.Left:
                     _lastKeyPressed = 'L';
                     break;

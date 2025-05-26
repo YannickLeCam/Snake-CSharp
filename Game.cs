@@ -90,6 +90,10 @@ namespace Snake
 
         public void UpdateGameState(char keyPress)
         {
+            if (keyPress == '♥')
+            {
+                return;
+            }
             List<List<int>> grille = new List<List<int>>();
             for (int i = 0; i < _largeurGrille; i++)
             {
@@ -134,6 +138,7 @@ namespace Snake
 
             return newFruitPosition;
         }
+
 
         public Point GetFruitPosition()
         {
